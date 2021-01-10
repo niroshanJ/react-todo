@@ -1,26 +1,34 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { todoDelete, todoDone } from '../../redux/actions';
+import { Button, Tooltip } from 'antd';
+import { CheckCircleOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { timeSince } from '../../helpers/time';
 import './style.css';
 
 // atomic component
 function Todo(props: any) {
 
-  const dispatch = useDispatch();
-
-  const deleteTodo = (id: number) => {
-    dispatch(todoDelete(id));
-  }
-
-  const updateTodo = (id: number) => {
-    dispatch(todoDone(id));
-  }
-
   return (
-    <div className="todo">
-      <p>{props.todo.title} - {props.todo.isDone ? 'Done' : 'Pending'}</p>
-      <button onClick={() => { deleteTodo(props.todo.id) }}>x</button>
-      <button onClick={() => { updateTodo(props.todo.id) }}>Done</button>
+    <div className={props.todo.isDone ? 'todo todo-done' : 'todo todo-pending'}>
+      <div style={{ width: '100%' }}>
+        <CheckCircleOutlined style={{ fontSize: '35px', color: props.todo.isDone ? '#A9D782' : '#CDE0FA', marginBottom: '15px' }} />
+        <p>
+          {props.todo.title}
+          <br />
+          <small><strong>{timeSince(props.todo.dateTime)}</strong></small>
+        </p>
+        <div className='text-right'>
+          <Tooltip title="Delete">
+            <Button size='small' style={{ marginRight: '10px' }} type="link" danger onClick={() => { props.deleteTodo(props.todo.id) }} shape="circle" icon={<CloseOutlined />} />
+          </Tooltip>
+          {!props.todo.isDone ?
+            <Tooltip title="Done">
+              <Button size='small' type="link" onClick={() => { props.updateTodo(props.todo.id) }} shape="circle" icon={<CheckOutlined />} />
+            </Tooltip>
+            :
+            <></>
+          }
+        </div>
+      </div>
     </div>
   );
 }
